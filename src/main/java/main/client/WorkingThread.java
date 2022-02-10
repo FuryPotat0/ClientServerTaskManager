@@ -1,10 +1,8 @@
 package main.client;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 public class WorkingThread implements Runnable {
     protected final static int INTERVAL = 100;
-    protected final AtomicBoolean running = new AtomicBoolean(false);
+    protected boolean running = false;
     private Thread worker;
 
 
@@ -17,7 +15,7 @@ public class WorkingThread implements Runnable {
     }
 
     public void interrupt() {
-        running.set(false);
+        running = false;
         worker.interrupt();
     }
 

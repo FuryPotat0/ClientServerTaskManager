@@ -86,8 +86,8 @@ public class ServerMain {
                                         taskLogHandler));
                             } else {
                                 LOG.warn("User wasn't authenticated");
-                                out.writeObject(new ServerClientMessage(ServerRespond.USER_TASK_LOG_HANDLER_ANSWER,
-                                        new WrongUserDataException("User wasn't authenticated")));
+                                out.writeObject(new ServerClientMessage(ServerRespond.USER_NOT_AUTHENTICATED,
+                                        "User wasn't authenticated"));
                             }
                         }
                         case NEW_TASK_ADDITION_REQUEST -> {
@@ -98,8 +98,8 @@ public class ServerMain {
                                         taskLogHandler));
                             } else {
                                 LOG.warn("User wasn't authenticated");
-                                out.writeObject(new ServerClientMessage(ServerRespond.NEW_TASK_ADDITION_ANSWER,
-                                        new WrongUserDataException("User wasn't authenticated")));
+                                out.writeObject(new ServerClientMessage(ServerRespond.USER_NOT_AUTHENTICATED,
+                                        "User wasn't authenticated"));
                             }
                         }
                         case TASK_DELETE_REQUEST -> {
@@ -110,8 +110,8 @@ public class ServerMain {
                                         taskLogHandler));
                             } else {
                                 LOG.warn("User wasn't authenticated");
-                                out.writeObject(new ServerClientMessage(ServerRespond.USER_TASK_LOG_HANDLER_ANSWER,
-                                        new WrongUserDataException("User wasn't authenticated")));
+                                out.writeObject(new ServerClientMessage(ServerRespond.USER_NOT_AUTHENTICATED,
+                                        "User wasn't authenticated"));
                             }
                         }
                         case END_OF_WORK -> {
@@ -148,19 +148,15 @@ public class ServerMain {
         }
 
         private boolean searchUserData(ObjectInputStream inputStream) throws IOException, ClassNotFoundException {
-            UserData userData = searchUserUsername(inputStream);
-            if (Objects.equals(userData.getUsername(), currentUser.getUsername()) &&
-                    Objects.equals(userData.getUserPassword(), currentUser.getUserPassword())) {
-                inputStream.close();
-                return true;
-            }
-            return false;
+            UserData userData = searchUserByUsername(inputStream);
+            return Objects.equals(userData.getUsername(), currentUser.getUsername()) &&
+                    Objects.equals(userData.getUserPassword(), currentUser.getUserPassword());
         }
 
         private boolean isUserExist() throws IOException, ClassNotFoundException {
             try (FileInputStream fileInputStream = new FileInputStream(SERVER_RESOURCES_PATH + USERS_DATA_FILE);
                  ObjectInputStream inputStream = new ObjectInputStream(fileInputStream)) {
-                searchUserUsername(inputStream);
+                searchUserByUsername(inputStream);
                 return true;
             } catch (EOFException e) {
                 LOG.warn("No existing user {} with such password", currentUser.getUsername());
@@ -168,12 +164,11 @@ public class ServerMain {
             return false;
         }
 
-        private UserData searchUserUsername(ObjectInputStream inputStream) throws IOException, ClassNotFoundException {
+        private UserData searchUserByUsername(ObjectInputStream inputStream) throws IOException, ClassNotFoundException {
             UserData userData;
             while (true) {
                 userData = (UserData) inputStream.readObject();
                 if (Objects.equals(userData.getUsername(), currentUser.getUsername())) {
-                    inputStream.close();
                     return userData;
                 }
             }

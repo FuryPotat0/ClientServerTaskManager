@@ -78,8 +78,8 @@ public class ClientThreadInput extends WorkingThread {
             threadAlarm.start();
 
             int number;
-            running.set(true);
-            while (running.get()) {
+            running = true;
+            while (running) {
                 try {
                     Thread.sleep(INTERVAL);
                 } catch (InterruptedException e) {
@@ -223,8 +223,8 @@ public class ClientThreadInput extends WorkingThread {
     private void setTaskLogHandler() throws IOException, ClassNotFoundException, WrongUserDataException {
         outSocket.writeObject(new ServerClientMessage(ClientRequests.USER_TASK_LOG_HANDLER_REQUEST, null));
         serverAnswer = (ServerClientMessage) inSocket.readObject();
-        if (serverAnswer.getObject().getClass() == WrongUserDataException.class)
-            throw new WrongUserDataException("User wasn't authenticated");
+        if (serverAnswer.getDescription() == ServerRespond.USER_NOT_AUTHENTICATED)
+            throw new WrongUserDataException((String) serverAnswer.getObject());
         taskLogHandler = (TaskLogHandler) serverAnswer.getObject();
     }
 
@@ -232,7 +232,7 @@ public class ClientThreadInput extends WorkingThread {
         outSocket.writeObject(new ServerClientMessage(ClientRequests.END_OF_WORK, null));
         serverAnswer = (ServerClientMessage) inSocket.readObject();
         threadAlarm.interrupt();
-        running.set(false);
+        running = false;
         LOG.info("User want to finish work");
     }
 
@@ -241,8 +241,8 @@ public class ClientThreadInput extends WorkingThread {
         taskLogHandler.addTask(task);
         outSocket.writeObject(new ServerClientMessage(ClientRequests.NEW_TASK_ADDITION_REQUEST, task));
         serverAnswer = (ServerClientMessage) inSocket.readObject();
-        if (serverAnswer.getObject().getClass() == WrongUserDataException.class)
-            throw new WrongUserDataException("User wasn't authenticated");
+        if (serverAnswer.getDescription() == ServerRespond.USER_NOT_AUTHENTICATED)
+            throw new WrongUserDataException((String) serverAnswer.getObject());
         LOG.info("User want to add new task, id= {}", task.getId());
     }
 
@@ -251,8 +251,8 @@ public class ClientThreadInput extends WorkingThread {
         taskLogHandler.deleteTask(id);
         outSocket.writeObject(new ServerClientMessage(ClientRequests.TASK_DELETE_REQUEST, id));
         serverAnswer = (ServerClientMessage) inSocket.readObject();
-        if (serverAnswer.getObject().getClass() == WrongUserDataException.class)
-            throw new WrongUserDataException("User wasn't authenticated");
+        if (serverAnswer.getDescription() == ServerRespond.USER_NOT_AUTHENTICATED)
+            throw new WrongUserDataException((String) serverAnswer.getObject());
         LOG.info("User want to delete task, number= {}", id);
     }
 }

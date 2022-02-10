@@ -19,8 +19,8 @@ public class ClientThreadAlarm extends WorkingThread {
 
     @Override
     public void run() {
-        running.set(true);
-        while (running.get()) {
+        running = true;
+        while (running) {
             try {
                 Thread.sleep(INTERVAL);
             } catch (InterruptedException e) {
