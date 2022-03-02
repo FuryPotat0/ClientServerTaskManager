@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Appenders>
+        <File name="file" fileName="log.log">
+            <PatternLayout>
+                <Pattern>%d %p %c{1.} [%t] %m %ex%n</Pattern>
+            </PatternLayout>
+        </File>
+
+        <File name="ClientThreadAlarmLogFile" fileName="clientThreadAlarmLog.log">
+            <PatternLayout>
+                <Pattern>%d %p %c{1.} [%t] %m %ex%n</Pattern>
+            </PatternLayout>
+        </File>
+
+        <File name="ClientThreadInputLogFile" fileName="clientThreadInputLog.log">
+            <PatternLayout>
+                <Pattern>%d %p %c{1.} [%t] %m %ex%n</Pattern>
+            </PatternLayout>
+        </File>
+
+        <File name="ServerLogFile" fileName="serverLog.log">
+            <PatternLayout>
+                <Pattern>%d %p %c{1.} [%t] %m %ex%n</Pattern>
+            </PatternLayout>
+        </File>
+
+        <Console name="Out">
+            <PatternLayout>
+                <Pattern>%d %p %c{1.} [%t] %m %ex%n</Pattern>
+            </PatternLayout>
+        </Console>
+    </Appenders>
+
+    <Loggers>
+
+        <Root level="TRACE">
+            <AppenderRef ref="file"/>
+        </Root>
+
+        <Logger name="ClientThreadAlarmLogger" level="TRACE" additivity="false">
+            <AppenderRef ref="ClientThreadAlarmLogFile"/>
+        </Logger>
+
+        <Logger name="ClientThreadInputLogger" level="TRACE" additivity="false">
+            <AppenderRef ref="ClientThreadInputLogFile"/>
+        </Logger>
+
+        <Logger name="ServerLogger" level="TRACE" additivity="false">
+            <AppenderRef ref="ServerLogFile"/>
+        </Logger>
+    </Loggers>
+</Configuration>
